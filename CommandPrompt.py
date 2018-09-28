@@ -1,6 +1,14 @@
-from tkinter import *
+from tkinter import *  # GUI Library
 
+# Main window
 root = Tk()
-theLabel = Label(root, text="Just the initial screen")
-theLabel.pack()
+root.title("EnglishToCode")
+
+frame = Frame(root, width=300, height=300, bg="black")
+frame.pack()
+
+entry = Entry(root, text="Please enter a phrase: ")
+entry.pack()
+
+# Displays on the screen
 root.mainloop()
