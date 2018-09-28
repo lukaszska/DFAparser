@@ -5,7 +5,7 @@ import math as m
 root = Tk()
 root.title("EnglishToCode")
 
-frame = Frame(root, width=300, height=300, bg="black")
+frame = Frame(root, width=500, height=500, bg="black")
 frame.pack()
 
 prompt_text = Label(root, text="Please enter something:")
