@@ -1,0 +1,70 @@
+# () = python syntax, || = english synonyms
+(if)
+- if
+- granted that
+- assuming that
+- end with "then"
+(elif)
+- or + (if)
+(else)
+- or else
+- or
+- otherwise
+- if not
+- end with "then"
+(while)
+- while
+- whilst
+- at the same time
+- during
+(for in)
+- for x in y then
+(==)
+- equals
+- equivalent
+- is
+(=)
+- equals
+- is
+- gets the value
+(and)
+- and
+- also
+(or)
+- or
+(def)
+- define
+- create
+- build
+- initiate
+- make
+- set up
+- end with "the function" + name
+(+)
+- add
+- combind
+- the sum of...
+- detract
+(-)
+- subtract
+- reduce x by y
+(*)
+- multiply
+- magnify
+(/)
+- divide
+(**)
+- to the exponent of
+- square
+- cube
+(%)
+- modulus
+- mod
+|function|
+- function
+- method
+- system
+|sum|
+- total
+|exponent|
+- power
