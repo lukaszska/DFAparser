@@ -1,0 +1,62 @@
+//Setting a var, where x is variable name and y is the value the variabe is given
+"Set [var]x as y"
+"[var]x is y"
+"(have a variable called) [var]x which is y"
+Basically, when the word "is" pops up, the keyword "[var]" marks the variable name, and whatever comes after "is" is its value. Same as with "as".
+Having keyword "[var]" will keep things organized and less confusing with later syntax. For example, a for loop where "loops as long as i is less than 10"
+
+"Have a value of 2 which is called [var]x"
+"Have a variable [var]x which is y"
+Accounting for whether someone speaks in passive or active tone, having [var] helps as well. "is" just links the two kywords together, and whichever has [var] is the variable.
+We can find the number "y" in the statement by searching for the word next to "of" and "which" if [var] comes after "is"
+
+"I am going to set this variable [var]x to y"
+This statement is more difficult. "set" may be used as a keyword (maybe), where [var] delimits the variable as usual, and "to" or "as" would divide the variable name and value.
+We can have the ocomputer ignore additional stuff, such as "I am going to" (does nothing to the meaning) and "this variable" (already defined by [var])
+
+Should we have a method to differentiate whether someone means they want it to be a string or integer? Such as:
+- Default to integer, and automatically switch it to a String for the user by detecting the logic the plan on using (difficult)
+- Forcing the user to name the variable type, such as "[var]x is [String]2", which kind of defeats the purpose of making this interpreter
+
+Realistically, we won't get 100% of inputs correct, unless we literally teach the computer the entirety of the English language, and give it a database to store how people say things.
+But we don't have the time or the skill (at least, I don't) to make that sort of thing. With this, we get a good ~90% of inputs, which seems okay as a starting point.
+I'm not sure whether fundamentally we are going in the wrong direction with this. Using this kind of take, where we just give a bunch of conditions and keywords for the computer to search for.
+We are going to end up with a lot of different "formats" we are going to have to check through to get this working accurately for the more complex logic.
+
+
+
+//greater than, less than, equal to, "and" statements, "or" statements, not equal to, "not" in general
+Assumed to be used in conjunction with the conditions for loops and if statements and whatever else.
+"(if) x is less than y / greater than y / equal to y"
+Since python compares strings and numbers and booleans the same way, we will not have to differentiate the "==" statement used.
+"(if) x is NOT equal to y" or "if x does NOT equal y"
+"is" would have to be ignored when [if] is detected in the same statement, since it would try to use "=" instead of "=="
+Can use [if] to detect using "==" instead of "=". "not" and "equal" both being present indicates to use "!=".
+Essentially, detect "if", detect previously defined "x", detect "not" being in front of "equal to", detect previously defined "y".
+
+How would we differentiate variables from straight Strings? For example, a variable called "hi" versus just checking if something is equal to a string called "hi".
+Would we have them say [var]x to reference the variable x, and just x to get string "x"?
+
+
+
+todo//if and else statements
+"[if] x then (do) y"
+
+
+
+
+todo//creating new indent for multi-statements/loops
+have a keyword to move indent? 
+[start ind 4], [end ind 4] or something
+(Probably a bad idea)
+
+
+dfa, turing machine , stacks
+
+dfa - deterministic finite automaton
+
+define regexin
+creating and removing a node
+adding transition between nodes
+marking state as accepting or rejecting
+defining an alphabet
