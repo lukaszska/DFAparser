@@ -9,6 +9,8 @@ defining an alphabet
 
 Since this is much more simple, we don't have to be as particular about the grammar that people will use.
 
+----------------------------------------------------------------------------------------------------------------
+
 //Creating, removing nodes
 "Create node '1'"
 "Create a node called '1'"
@@ -26,8 +28,9 @@ We could also ake a convenience function, such as "switch default create to crea
 We can try our hand at creating synonyms for "create" and "remove", and see how it goes. I might just come up with random words when making the official list, and see how it goes.
 I'm not sure if going too far with the synonyms will break anything yet.
 
-
-
+re.compile(r'((create|make|add|build|generate|produce)|(delete|destroy|erase|discard|cut out|kill))|(node)|(\'[\w]+\'))')
+(node)?
+----------------------------------------------------------------------------------------------------------------
 //Creating an alphabet
 "Make the alphabet a set from 'a' to 'z'"
 "Generate an alphabet going from '0' to '4'"
@@ -47,8 +50,9 @@ No "to" will just make the alphabet limited to whatever is the input.
 "Add the range between '1' and '4' to the alphabet"
 Having "alphabet" and "add/remove" will add or remove whatever is the input. Can work with a range of value since it has "to"
 
-
-
+re.compile(r'(create|make|build|generate|produce)|(add|remove)|(alphabet)|(from|between)|((\'[\w]+\')\sto\s(\'[\w]+\'))|(\'[\w]+\')')
+(alphabet)?
+----------------------------------------------------------------------------------------------------------------
 //Adding transition to the nodes
 "create transition 'a' going to 'b' if '0'"
 "create transition to 'b' from 'a' if '0'"
@@ -63,8 +67,9 @@ Again, an isue with synonyms.
 Create => "make", "add", "build", "generate", "produce", and more
 Remove => "delete", "destroy", "erase", "discard", "cut out" (I'm pretty sure that two-word keywords won't be an issue)
 
-
-
+re.compile(r'((create|make|add|build|generate|produce)|(delete|destroy|erase|discard|cut out|kill))|(transition)|(to\s*(\'[\w]+\'))|(\'[\w]+\')|((if|when)\s(\'[\w]+\'))')
+(transition)?
+----------------------------------------------------------------------------------------------------------------
 //Accepting/rejecting state
 "Mark nodes '1', '2', '3' as accepting"
 "Reject '1'"
@@ -82,8 +87,9 @@ Since this is a legal move for DFAs, we can make "all" also a keyword that selct
 
 I'm not entirely sure what to do with synonyms for "accept" and "reject", since there really aren't many.
 
-
-
+re.compile(r'(accept|reject)|(node)|(all)|(except|other than)|((\'[\w]+\')+)')
+(node)?
+----------------------------------------------------------------------------------------------------------------
 //Defining a start position
 "Set start to 'a'"
 "Start at 'a'"
@@ -91,8 +97,9 @@ I'm not entirely sure what to do with synonyms for "accept" and "reject", since 
 Can have "start" and "begin" (And any other synonyms) mark the beginning position, along with any one node listed in the entry.
 We can have the system set so that if the chosen node name was not yet created, the node is automatically created so that people don't have to say "create node" "begin at node"
 
+re.compile(r'(start|begin)|(\'[\w]+\')|(all)|(except|other than)')
 
-
+----------------------------------------------------------------------------------------------------------------
 This was all that came to mind, everything should be covered. All that's left is to actually make the interpreter now.
 
 
