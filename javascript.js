@@ -12,6 +12,7 @@ function checkKey(e){
 function enterCommand(){
     var text = document.getElementById("command-input").value;
     setConsole(text);
+    window.alert(submitCode(text));
     //runCommand(text);
     document.getElementById("command-input").value = "";
 }
@@ -29,6 +30,17 @@ function getText() {
 function setImage(){
     document.getElementById("image").src = "pepehands.png";
     //console.log(getText());
+}
+
+function submitCode(command){
+    var response = "";
+    $.post("index", {script: command}, function(req){
+        console.log("Call success");
+        console.log("Request: " + req);
+        response = req;
+        //window.alert(response);
+    });
+    return response;
 }
 
 function readInput(text) {
