@@ -109,8 +109,10 @@
             <canvas id="myCanvas" width="2000px" height="1000px"></canvas>
         </div>
         <div id="console"></div>
-        <input class="bottom-bar" id="command-input">
-        <button id="compile-button" onclick="setImage()">Compile</button>
+        <form action="server.py">
+            <input type="text" class="bottom-bar" id="command-input">
+            <input id="compile-button" type="submit" value="Compile">
+        </form>
     </body>
     <script src="javascript.js"></script>
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
