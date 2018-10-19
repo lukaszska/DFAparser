@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -16,6 +16,12 @@ def user(name):
 @app.route('/index')
 def index():
     return render_template("index.html")
+
+
+@app.route('/server', methods=['GET', 'POST'])
+def parse_request():
+    data = request.data
+    return data.form
 
 
 if __name__ == "__main__":

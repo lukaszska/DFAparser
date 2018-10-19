@@ -26,6 +26,6 @@ function getText() {
 }
 
 function setImage(){
-    document.getElementById("image").src = "img/pepehands.png";
+    document.getElementById("image").src = "static/img/pepehands.png";
     console.log(getText());
 }
