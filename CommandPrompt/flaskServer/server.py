@@ -13,15 +13,15 @@ def user(name):
     return render_template("user.html", name=name)
 
 
-@app.route('/index')
+@app.route('/index', methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        return return_string()
     return render_template("index.html")
 
 
-@app.route('/server', methods=['GET', 'POST'])
-def parse_request():
-    data = request.data
-    return data.form
+def return_string():
+    return "Hello!"
 
 
 if __name__ == "__main__":
