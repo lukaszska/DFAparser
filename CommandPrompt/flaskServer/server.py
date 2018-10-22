@@ -21,7 +21,7 @@ def index():
 
 
 def return_string(input):
-    return "You typed:%s" % input
+    return "You typed: %s" % input
 
 
 if __name__ == "__main__":
