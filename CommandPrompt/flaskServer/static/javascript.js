@@ -1,4 +1,4 @@
-document.onkeydown = checkKey;
+document.getElementById("command-input").onkeydown = checkKey;
 
 function checkKey(e){
     e = e || window.event;
