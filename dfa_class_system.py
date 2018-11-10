@@ -10,10 +10,10 @@ BUGS TO FIX:
 
 GOALS:
 - get it to use the regex script
-- create command line interface
 - combind add/remove methods into one method, or make separate function that decides which to call
 - function needs to read beginning flag of tuple and call appropriate function
 - clean tuple in flag reading function, and send a list to DFA creation methods
+- change script to store all vars in dict
 """
 class DFA:
     # Create the data structure that will represent the DFA
@@ -40,11 +40,14 @@ class DFA:
         n_list = list(nodes)
         for node in n_list[1:]:
             self.dfa_dict.pop(node)
+        '''
+        NEEDS TO BE DEBUGGED, removes transitions to removed node
         for node in self.dfa_dict:
             for transition in self.dfa_dict:
                 for yoink in n_list[1:]:
                     if self.dfa_dict[node][transition] == yoink:
                         self.dfa_dict[node].pop(transition)
+        '''
         
 
 
@@ -85,22 +88,3 @@ class DFA:
             print(self.dfa_dict[current_node][c])
             current_node = self.dfa_dict[current_node][c]
         return current_node in self.accepted_states
-'''
-TESTING THE DFA, note first part of tuple doesn't have a use atm
-'''
-meme = DFA()
-meme.add_nodes(('memes', 'a', 'b', 'c', 'd'))
-print(meme.dfa_dict)
-meme.remove_nodes(('memes', 'd'))
-print(meme.dfa_dict)
-meme.add_transitions(('bazinga!', 'a', 'b', '0', 'b', 'c', '0', 'c', 'c', '0', 'a', 'a', '1', 'b', 'a', '1', 'c', 'c', '1'))
-print(meme.dfa_dict)
-meme.set_alphabet(('y i k e s', '0', '1'))
-print(meme.alphabet)
-meme.set_accepts(('Fortnite > PUBG', 'c'))
-meme.add_starting_node(('SPOILER: spiderman dies in infinity war', 'a'))
-meme.remove_nodes(('oooffff', 'b'))
-print(meme.dfa_dict)
-#print(meme.accepted_states)
-#print(meme.check_string("000"))
-    
