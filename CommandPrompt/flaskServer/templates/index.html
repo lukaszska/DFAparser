@@ -1,0 +1,245 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <title>Computer Logic Visualizer</title>
+    </head>
+    <link rel="stylesheet" type="text/css" href="../static/stylesheet.css">
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand" href="#">DFA</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        File
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class="dropdown-item">Save</button>
+                        <button class="dropdown-item">Save As</button>
+                        <button class="dropdown-item">Import</button>
+                        <button class="dropdown-item">Export</button>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Edit
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class="dropdown-item">Undo</button>
+                        <button class="dropdown-item">Redo</button>
+                        <button class="dropdown-item">Select All</button>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">NFA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Turing Machine</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <div id="image">
+            <canvas id="myCanvas" width="2000px" height="1000px"></canvas>
+        </div>
+        <div id="console"></div>
+        <!--<form method="GET" target="_blank">-->
+        <input type="text" class="bottom-bar" id="command-input">
+        <input id="compile-button" type="submit" value="Compile">
+        <!--</form>-->
+    </body>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script scr="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="../static/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        var canvas = document.getElementById("myCanvas");
+        var context = canvas.getContext("2d");
+        context.fillStyle = "#FFFFFF";
+        var height = $('#image').height();
+        var width = $('#image').width();
+
+        //left circle
+        drawLeftCircle("#000000");
+        //right circle
+        drawRightCircle("#000000");
+        //bottom line
+        drawBottomLine("#000000");
+        //top line
+        drawTopLine("#000000");
+        //left line
+        drawLeftLine("#000000");
+        //right line
+        drawRightLine("#0000000");
+
+        function drawArrowhead(x1, y1, x2, y2, radius, color) {
+            context.fillStyle = color;
+            var x_center = x2;
+            var y_center = y2;
+
+            var angle;
+            var x;
+            var y;
+
+            context.beginPath();
+
+            angle = Math.atan2(y2 - y1, x2 - x1)
+            x = radius * Math.cos(angle) + x_center;
+            y = radius * Math.sin(angle) + y_center;
+
+            context.moveTo(x, y);
+
+            angle += (1.0/3.0) * (2 * Math.PI)
+            x = radius * Math.cos(angle) + x_center;
+            y = radius * Math.sin(angle) + y_center;
+
+            context.lineTo(x, y);
+
+            angle += (1.0/3.0) * (2 * Math.PI)
+            x = radius *Math.cos(angle) + x_center;
+            y = radius *Math.sin(angle) + y_center;
+
+            context.lineTo(x, y);
+
+            context.closePath();
+
+            context.fill();
+        }
+
+        function drawLeftCircle(color) {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.arc(width/4, height/2, height/3, 0, 2 * Math.PI);
+            context.stroke();
+        }
+
+        function drawRightCircle(color) {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.arc(width * 3/4, height/2, height/3, 0, 2 * Math.PI);
+            context.stroke();
+        }
+
+        function drawBottomLine(color) {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.moveTo(width/4 + height/3, height/2 + height/3);
+            context.quadraticCurveTo(width/2, height, width * 3/4 - height/3, height/2 + height/3);
+            context.stroke();
+            drawArrowhead((width * 3/4 - height/3) * .9, (height/2 + height/3) * 1.1, width * 3/4 - height/3, height/2 + height/3, 10, color);
+        }
+
+        function drawTopLine(color) {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.moveTo(width * 3/4 - height/3, height/2 - height/3);
+            context.quadraticCurveTo(width/2, 0, width/4 + height/3, height/2 - height/3);
+            context.stroke();
+            drawArrowhead((width/4 + height/3) * .9, (height/2 - height/3) * .5, width/4 + height/3, height/2 - height/3, 10, color);
+        }
+
+        function drawLeftLine(color) {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.moveTo(width/4 - height/3, height/2 - height/4);
+            context.quadraticCurveTo(width/16, height/2, width/4 - height/3, height/2 + height/4);
+            context.stroke();
+            drawArrowhead((width/4 - height/3 * .9), (height/2 + height/4) * .95, width/4 - height/3, height/2 + height/4, 10, color);
+        }
+
+        function drawRightLine(color) {
+            context.strokeStyle = color;
+            context.beginPath();
+            context.moveTo(width * 3/4 + height/3, height/2 + height/4);
+            context.quadraticCurveTo(width * 15/16, height/2, width * 3/4 + height/3, height/2 - height/4);
+            context.stroke();
+            drawArrowhead((width * 3/4 + height/3) * .9, (height/2 - height/4) * 1.6, width * 3/4 + height/3, height/2 - height/4, 10, color);
+        }
+
+        function focusLeftCircle() {
+            drawRightCircle("#FFFFFF");
+            drawRightCircle("#000000");
+            drawLeftCircle("#FFFFFF");
+            drawLeftCircle("#FF0000");
+        }
+
+        function focusRightCircle() {
+            drawLeftCircle("#FFFFFF");
+            drawLeftCircle("#000000");
+            drawRightCircle("#FFFFFF");
+            drawRightCircle("#FF0000");
+        }
+
+        function focusBottomLine() {
+            drawBottomLine("#FFFFFF");
+            drawBottomLine("#FF0000");
+            drawRightLine("#FFFFFF");
+            drawRightLine("#000000");
+            drawLeftLine("#FFFFFF");
+            drawLeftLine("#000000");
+            drawTopLine("#FFFFFF");
+            drawTopLine("#000000");
+        }
+
+        function focusTopLine() {
+            drawTopLine("#FFFFFF");
+            drawTopLine("#FF0000");
+            drawRightLine("#FFFFFF");
+            drawRightLine("#000000");
+            drawLeftLine("#FFFFFF");
+            drawLeftLine("#000000");
+            drawBottomLine("#FFFFFF");
+            drawBottomLine("#000000");
+        }
+
+        function focusLeftLine() {
+            drawLeftLine("#FFFFFF");
+            drawLeftLine("#FF0000");
+            drawRightLine("#FFFFFF");
+            drawRightLine("#000000");
+            drawBottomLine("#FFFFFF");
+            drawBottomLine("#000000");
+            drawTopLine("#FFFFFF");
+            drawTopLine("#000000");
+        }
+
+        function focusRightLine() {
+            drawRightLine("#FFFFFF");
+            drawRightLine("#FF0000");
+            drawBottomLine("#FFFFFF");
+            drawBottomLine("#000000");
+            drawLeftLine("#FFFFFF");
+            drawLeftLine("#000000");
+            drawTopLine("#FFFFFF");
+            drawTopLine("#000000");
+        }
+
+        function leftToRight() {
+            focusRightCircle();
+            focusBottomLine();
+        }
+
+        function rightToLeft() {
+            focusLeftCircle();
+            focusTopLine()
+        }
+
+        function leftToLeft() {
+            focusLeftCircle();
+            focusLeftLine();
+        }
+
+        function rightToRight() {
+            focusRightCircle();
+            focusRightLine();
+        }
+    </script>
+</html>

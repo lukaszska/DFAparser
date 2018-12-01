@@ -1,0 +1,193 @@
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <title>Computer Logic Visualizer</title>
+    </head>
+    <style>
+    body{
+        background-color:white;
+        padding:0;
+        margin:0;
+    }
+    #console{
+        font-family:'Courier New', Courier, monospace;
+        color:greenyellow;
+        overflow-y: scroll;
+        padding-left:5px;
+        height:50vh;
+        width:100vw;
+        margin-top:45vh;
+        position: absolute;
+        visibility: visible;
+        background-color:black;
+        font-size:50px;
+    }
+    ::-webkit-scrollbar{
+        display:none;
+    }
+    .bottom-bar{
+        width:90vw;
+        height:5vh;
+        font-family:'Courier New', Courier, monospace;
+        color:white;
+        background-color:black;
+        border-style:solid;
+        border-width:3px;
+        border-color:white;
+        bottom:0px;
+        left:0px;
+        position:fixed;
+    }
+    #header{
+        color:white;
+        height:5vh;
+        top:0px;
+        width:100vw;
+        position:fixed;
+    }
+    .subHeader{
+        height:4vh;
+        position: fixed;
+        border-style: inset;
+        border-color:white;
+    }
+    #image{
+        position: fixed;
+        width:100vw;
+        height:40vh;
+        top:5vh;
+    }
+    #compile-button{
+        position:fixed;
+        bottom:0px;
+        width:10vw;
+        height:5vh;
+        right:0px;
+    }
+    </style>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+            <a class="navbar-brand" href="#">DFA</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        File
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class="dropdown-item">Save</button>
+                        <button class="dropdown-item">Save As</button>
+                        <button class="dropdown-item">Import</button>
+                        <button class="dropdown-item">Export</button>
+                        </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Edit
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        <button class="dropdown-item">Undo</button>
+                        <button class="dropdown-item">Redo</button>
+                        <button class="dropdown-item">Select All</button>
+                        </div>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">NFA</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Turing Machine</a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+        <svg id="image">
+        </svg>
+        <div id="console"></div>
+        <input type="text" class="bottom-bar" id="command-input">
+        <input id="compile-button" type="submit" value="Compile">
+    </body>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script scr="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+    <script src="../static/javascript.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+    <script>
+        var height = $('#image').height();
+        var width = $('#image').width();
+
+        var centerX = width/2;
+        var centerY = height/2;
+        var radius = height/3;
+
+        var svgContainer = d3.select("svg");
+        var circle = svgContainer.selectAll("circle").data([1, 2, 3, 4]);
+
+        var arrayOfCircles = new Array();
+
+        function createCircle(x, y, r, i) {
+            var newCircle = circle.enter().append("circle")
+            .attr("cx", x)
+            .attr("cy", y)
+            .attr("fill", "white")
+            .attr("stroke-width", 2)
+            .attr("r", r);
+
+            newCircle.attr("stroke", function() {
+                if (i == 2) {
+                    return "steelblue";
+                } else {
+                    return "green";
+                }
+            });
+
+            arrayOfCircles.push(newCircle);
+        }
+
+        function drawLine(xOne, yOne, xTwo, yTwo) {
+            svgContainer.append("line")
+            .attr("x1", xOne)
+            .attr("x2", xTwo)
+            .attr("y1", yOne)
+            .attr("y2", yTwo)
+            .attr("stroke-width", 2)
+            .attr("stroke", "black");
+        }
+
+        function drawText(x, y, text) {
+            svgContainer.append("text")
+            .attr("dx", x - 4)
+            .attr("dy", y + 4)
+            .text(text);
+        }
+
+        /*Create a DFA of 3 circles. Draw lines connecting them.
+        First should be named first, second, second, etc.*/
+
+        function createDFA(numCircles, arrayOfStrings) {
+            var angle = 0;
+            var centers = new Array();
+            for (i = 1; i <= numCircles; i++) {
+                centers.push([centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle)]);
+                createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), i);
+                angle += (Math.PI * 2) / numCircles;
+
+                drawText(centers[i - 1][0], centers[i - 1][1], i);
+            }
+
+            for (i = 1; i < numCircles; i++) {
+                //drawLine(centers[i - 1][0], centers[i - 1][1], centers[i][0], centers[i][1]);
+            }
+
+            //drawLine(centers[centers.length - 1][0], centers[centers.length - 1][1], centers[0][0], centers[0][1]);
+        }
+
+        createDFA(5, ["hi"]);
+    </script>
+</html>

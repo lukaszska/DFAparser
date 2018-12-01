@@ -1,0 +1,59 @@
+body{
+    background-color:white;
+    padding:0;
+    margin:0;
+}
+#console{
+    font-family:'Courier New', Courier, monospace;
+    color:greenyellow;
+    overflow-y: scroll;
+    padding-left:5px;
+    height:50vh;
+    width:100vw;
+    margin-top:45vh;
+    position: absolute;
+    visibility: visible;
+    background-color:black;
+}
+::-webkit-scrollbar{
+    display:none;
+}
+.bottom-bar{
+    width:90vw;
+    height:5vh;
+    font-family:'Courier New', Courier, monospace;
+    color:white;
+    background-color:black;
+    border-style:solid;
+    border-width:3px;
+    border-color:white;
+    bottom:0px;
+    left:0px;
+    position:fixed;
+}
+#header{
+    color:white;
+    height:5vh;
+    top:0px;
+    width:100vw;
+    position:fixed;
+}
+.subHeader{
+    height:4vh;
+    position: fixed;
+    border-style: inset;
+    border-color:white;
+}
+#image{
+    position: fixed;
+    width:100vw;
+    height:40vh;
+    top:5vh;
+}
+#compile-button{
+    position:fixed;
+    bottom:0px;
+    width:10vw;
+    height:5vh;
+    right:0px;
+}
