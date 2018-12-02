@@ -6,7 +6,7 @@ from regexEnumArgs import get_information
 import json
 
 app = Flask(__name__)
-dfas = {}   #   key: IP, Value: DFA
+users = {}   #   key: IP, Value: DFA
 
 
 @app.route('/')
@@ -22,11 +22,11 @@ def user(name):
 @app.route('/index', methods=['GET', 'POST'])
 def index():
     if request.method == 'POST':
-        if request.remote_addr not in dfas:
-            dfas[request.remote_addr] = DFA()
-        dfas[request.remote_addr].tuple_reader(get_information(request.form['script']))
-        print(type(dfas[request.remote_addr]))
-        return json.dumps(dfas[request.remote_addr].dfa_dict)
+        user = request.remote_addr
+        if user not in users:
+            users[user] = DFA()
+        users[users].tuple_reader(get_information(request.form['script']))
+        return json.dumps(users[user].dfa_dict)
     return render_template("index.html")
 
 
