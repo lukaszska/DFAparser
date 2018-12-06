@@ -1,6 +1,13 @@
 import re
 
-#text as input string
+
+'''
+Takes user input and turns it into a tuple which the DFA machine can use to interact with.
+@var text as user's input String to take data from
+@return tuple of variable size according to the action taken by the user, with first element as ENUM for class of action
+'''
+
+
 def get_information(text):
     detect_type = re.compile(
         r'alphabet(?!\')|transition(?!\')|(accept(?!\')|reject(?!\'))|'
@@ -46,44 +53,44 @@ def get_information(text):
     )
 
     collection = None
-    thing = []
+    collection_list = []
     if detect_type.search(text).group(0) == "node":
         collection = re.findall(create_node, text)
-        thing = [''] * (len(collection[0]) + 1)
+        collection_list = [''] * (len(collection[0]) + 1)
         if add_remove.search(text).group(1) is not None:
-            thing[0] = '1'
+            collection_list[0] = '1'
         else:
-            thing[0] = '2'
+            collection_list[0] = '2'
     if detect_type.search(text).group(0) == "alphabet":
         collection = re.findall(create_alphabet, text)
-        thing = [''] * (len(collection[0]) + 1)
+        collection_list = [''] * (len(collection[0]) + 1)
         if add_remove.search(text).group(1) is not None:
-            thing[0] = '3'
+            collection_list[0] = '3'
         else:
-            thing[0] = '4'
+            collection_list[0] = '4'
     if detect_type.search(text).group(0) == "transition":
         collection = re.findall(create_transition, text)
-        thing = [''] * (len(collection[0]) + 1)
+        collection_list = [''] * (len(collection[0]) + 1)
         if add_remove.search(text).group(1) is not None:
-            thing[0] = '5'
+            collection_list[0] = '5'
         else:
-            thing[0] = '6'
+            collection_list[0] = '6'
     if detect_type.search(text).group(0) == "accept":
         collection = re.findall(create_accept, text)
-        thing = [''] * (len(collection[0]) + 1)
-        thing[0] = '7'
+        collection_list = [''] * (len(collection[0]) + 1)
+        collection_list[0] = '7'
     if detect_type.search(text).group(0) == "reject":
         collection = re.findall(create_accept, text)
-        thing = [''] * (len(collection[0]) + 1)
-        thing[0] = '8'
+        collection_list = [''] * (len(collection[0]) + 1)
+        collection_list[0] = '8'
     if detect_type.search(text).group(0) == "start" or detect_type.search(text).group(0) == "begin":
         collection = re.findall(create_start, text)
-        thing = [''] * (len(collection[0]) + 1)
-        thing[0] = '9'
+        collection_list = [''] * (len(collection[0]) + 1)
+        collection_list[0] = '9'
     if detect_type.search(text).group(0) == "run" or detect_type.search(text).group(0) == "execute":
         collection = re.findall(run_machine, text)
-        thing = ['0', collection[1]]
-        return tuple(thing)
+        collection_list = ['0', collection[1]]
+        return tuple(collection_list)
 
     if collection is None:
         return None
@@ -91,5 +98,5 @@ def get_information(text):
     for x in collection:
         for i in range(len(x)):
             if x[i] != '':
-                thing[i+1] = x[i]
-    return tuple(thing)
+                collection_list[i+1] = x[i]
+    return tuple(collection_list)
