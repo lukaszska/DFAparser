@@ -81,24 +81,23 @@ class DFA:
     # Checks tuple and decides what function to run
     def tuple_reader(self, tup):
         flag = tup[0]
-        # create or remove node
+        # create nodes
         if flag == '1':
-            if tup[1] in self.dfa_dict['graph']:
-                self.remove_nodes(tup)
-            else:
-                self.add_nodes(tup)
+            self.add_nodes(tup)
         # set alphabet
-        elif flag == '2':
+        elif flag == '3' or flag == '4':
             self.set_alphabet(tup)
         # set transitions
-        elif flag == '3':
+        elif flag == '5' or flag == '6':
             self.set_transitions(tup)
         # create or remove accepted states
-        elif flag == '4':
+        elif flag == '7' or flag ==  '8':
             self.set_accepts(tup)
         # declare start
-        elif flag == '5':
+        elif flag == '9':
             self.add_starting_node(tup)
+        elif flag == '0':
+            self.check_string(tup[1])
 
 '''
 TESTS WITH SIMPLE GRAPH
