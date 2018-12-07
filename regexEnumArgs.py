@@ -9,6 +9,9 @@ Takes user input and turns it into a tuple which the DFA machine can use to inte
 
 
 def get_information(text):
+    if len(text) == 0 or text is None:
+        return None
+
     detect_type = re.compile(
         r'alphabet(?!\')|transition(?!\')|(accept(?!\')|reject(?!\'))|'
         r'(start(?!\')|begin(?!\'))|node(?!\')|(run(?!\')|execute(?!\'))'
@@ -52,8 +55,12 @@ def get_information(text):
         r'([\w]+)'
     )
 
+    if detect_type.search(text) is None:
+        return None
+
     collection = None
     collection_list = []
+
     if detect_type.search(text).group(0) == "node":
         collection = re.findall(create_node, text)
         collection_list = [''] * (len(collection[0]) + 1)
@@ -96,7 +103,9 @@ def get_information(text):
         return None
 
     for x in collection:
+        if len(collection_list) <= len(x):
+            return None
         for i in range(len(x)):
-            if x[i] != '':
+            if x[i] != '' and x[i] != "'":
                 collection_list[i+1] = x[i]
     return tuple(collection_list)
