@@ -25,7 +25,7 @@ def index():
         user = request.remote_addr
         if user not in users:
             users[user] = DFA()
-        users[users].tuple_reader(get_information(request.form['script']))
+        users[user].tuple_reader(get_information(request.form['script']))
         return json.dumps(users[user].dfa_dict)
     return render_template("index.html")
 
