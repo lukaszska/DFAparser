@@ -14,23 +14,23 @@ GOALS:
 - clean tuple in flag reading function, and send a list to DFA creation methods
 - change script to store all vars in dict
 """
-
-
 class DFA:
     # Create the data structure that will represent the DFA
     def __init__(self):
         self.dfa_dict = {}
         self.dfa_dict['alphabet'] = []
         self.dfa_dict['accepted_states'] = []
+        self.dfa_dict['transitions'] = []
         self.dfa_dict['start'] = None
-        self.dfa_dict['graph'] = {}
+        self.dfa_dict['graph'] = []
 
     # Manipulation methods below
     # Adds nodes into the list, if list is empty first node is start
     def add_nodes(self, nodes):
-        n_list = list(nodes)
-        for node in n_list[1:]:
-            self.dfa_dict['graph'][node] = self.dfa_dict.get(node, {})
+        for node in nodes:
+            if node in self.dfa_dict['graph']:
+                continue
+            self.dfa_dict['graph'].append(node)
 
     # Adds starting node
     def add_starting_node(self, nodes):
@@ -39,21 +39,32 @@ class DFA:
 
     # Removes the nodes from the list and all transitions to the node
     def remove_nodes(self, nodes):
-        n_list = list(nodes)
-        for node in n_list[1:]:
-            self.dfa_dict['graph'].pop(node)
+        if len(self.dfa_dict['graph']) == 0:
+            return
+        for node in nodes:
+            if node not in self.dfa_dict['graph']:
+                continue
+            node_index = self.dfa_dict['graph'].index(node)
+            self.dfa_dict['graph'].pop(node_index)
 
     # Updates the inner dict with new transtions (begin_node, destination_node, edge)
-    def set_transitions(self, transitions):
-        t_list = list(transitions)
+    def add_transitions(self, transitions):
+        transition = []
+        for i in range(0, len(transitions) - 1):
+            if transitions[i] not in self.dfa_dict['graph']:
+                continue
+            transition.append(transitions[i])
+        if len(transition) == 0:
+            return
+        self.dfa_dict['transitions'].append(transition)
+
+    # Updates the inner dict with new transitions (begin_node, destination_node, edge)
+    def remove_transitions(self, transitions):
         for i in range(1, len(t_list), 3):
-            if t_list[i + 2] in self.dfa_dict['graph'][t_list[i]]:
-                self.dfa_dict['graph'][t_list[i]].pop(t_list[i + 2])
-            else:
-                self.dfa_dict['graph'][t_list[i]][t_list[i + 2]] = t_list[i + 1]
+            self.dfa_dict['graph'][t_list[i]].pop(t_list[i + 2])
 
     # If node already exists, removed. If node does exist, add.
-    def set_accepts(self, accepts):
+    def add_accepts(self, accepts):
         n_list = list(accepts)
         for i in range(1, len(n_list)):
             if n_list[i] in self.dfa_dict['accepted_states']:
@@ -61,59 +72,73 @@ class DFA:
             else:
                 self.dfa_dict['accepted_states'].append(n_list[i])
 
+    # If node already exists, removed. If node does exist, add.
+    def remove_accepts(self, accepts):
+        n_list = list(accepts)
+        for i in range(1, len(n_list)):
+            self.dfa_dict['accepted_states'].pop(self.dfa_dict['accepted_states'].index(n_list[i]))
+
     # Create alphabet
-    def set_alphabet(self, alph):
+    def add_alphabet(self, alph):
         a_list = list(alph)
         for i in range(1, len(a_list)):
-            if a_list[i] in self.dfa_dict['alphabet']:
-                self.dfa_dict['alphabet'].pop(self.dfa_dict['alphabet'].index(a_list[i]))
-            else:
-                self.dfa_dict['alphabet'].append(a_list[i])
+            self.dfa_dict['alphabet'].append(a_list[i])
+
+    # remove alphabet
+    def remove_alphabet(self, alph):
+        a_list = list(alph)
+        for i in range(1, len(a_list)):
+            self.dfa_dict['alphabet'].pop(self.dfa_dict['alphabet'].index(a_list[i]))
 
     # Runs through the graph and checks if the string is accepted
     def check_string(self, s):
         current_node = self.dfa_dict['start']
-        print(current_node)
         for c in s:
-            print(self.dfa_dict['graph'][current_node][c])
             current_node = self.dfa_dict['graph'][current_node][c]
         return current_node in self.dfa_dict['accepted_states']
 
     # Checks tuple and decides what function to run
     def tuple_reader(self, tup):
+        if tup is None:
+            return
         flag = tup[0]
-        # create or remove node
+        # create nodes
         if flag == '1':
-            if tup[1] in self.dfa_dict['graph']:
-                self.remove_nodes(tup)
-            else:
-                self.add_nodes(tup)
+            self.add_nodes(tup[1:])
+        if flag == '2':
+            self.remove_nodes(tup[1:])
         # set alphabet
-        elif flag == '2':
-            self.set_alphabet(tup)
-        # set transitions
         elif flag == '3':
-            self.set_transitions(tup)
-        # create or remove accepted states
+            self.add_alphabet(tup[1:])
         elif flag == '4':
-            self.set_accepts(tup)
-        # declare start
+            self.remove_alphabet(tup[1:])
+        # set transitions
         elif flag == '5':
-            self.add_starting_node(tup)
+            self.add_transitions(list(tup).pop(1))
+        elif flag == '6':
+            self.remove_transitions(list(tup).pop(1))
+        # create or remove accepted states
+        elif flag == '7':
+            self.add_accepts(tup[1:])
+        elif flag == '8':
+            self.remove_accepts(tup[1:])
+        # declare start
+        elif flag == '9':
+            self.add_starting_node(tup[1:])
+        elif flag == '0':
+            return self.check_string(tup[1])
 
 
-'''
-TESTS WITH SIMPLE GRAPH
+#TESTS WITH SIMPLE GRAPH
 test_dfa = DFA()
 nodes = ('1', 'a', 'b', 'c')
-alphy = ('2', '0', '1')
-trans = ('3', 'a', 'a', '0', 'a', 'b', '1', 'b', 'a', '0', 'b', 'c', '1', 'c', 'c', '0', 'c', 'c', '1')
-accepter = ('4', 'c')
-starty = ('5', 'a')
-test_dfa.tuple_reader(nodes)
-test_dfa.tuple_reader(alphy)
-test_dfa.tuple_reader(trans)
-test_dfa.tuple_reader(accepter)
-test_dfa.tuple_reader(starty)
-print(test_dfa.check_string('10101011'))
-'''
+alphy = ('3', '0', '1')
+trans = ('5', 'a', 'a', '0', 'a', 'b', '1', 'b', 'a', '0', 'b', 'c', '1', 'c', 'c', '0', 'c', 'c', '1')
+accepter = ('7', 'c')
+starty = ('9', 'a')
+
+#   print(test_dfa.tuple_reader(('0', '10')))
+#   print (test_dfa.dfa_dict['accepted_states'])
+
+#   print('test')
+#   print('c' in ['c'])

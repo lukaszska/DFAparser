@@ -13,47 +13,232 @@ function enterCommand(){
     var text = document.getElementById("command-input").value;
     setConsole(text);
     submitCode(text);
-    //runCommand(text);
     document.getElementById("command-input").value = "";
 }
 
 function setConsole(text){
     document.getElementById("console").innerHTML = document.getElementById("console").innerHTML + text + "<br>";
     document.getElementById("console").scrollTop = document.getElementById("console").scrollHeight;
-    readInput(text);
 }
 
 function getText() {
     return document.getElementById("console").innerHTML;
 }
 
-function setImage(){
-    document.getElementById("image").src = "pepehands.png";
-    //console.log(getText());
-}
-
 function submitCode(command){
-    var response = "";
     $.post("index", {script: command}, function(req){
         console.log("Call success");
         console.log("Type: " + typeof req);
         console.log("Request: " + req);
-        setConsole(req);
-        window.alert(req);
-        response = req;
-        //window.alert(response);
+        parseJson(req);
     });
-    return response;
 }
 
-function readInput(text) {
-    if (text === "left to right") {
-        leftToRight();
-    } else if (text === "right to left") {
-        rightToLeft();
-    } else if (text === "left to left") {
-        leftToLeft();
-    } else if (text === "right to right") {
-        rightToRight();
+function parseJson(json) {
+    console.log(json);
+    console.log(typeof json);
+    json = JSON.parse(json);
+    console.log(typeof json);
+    console.log(json.graph);
+    createDFA(json.graph, json.transitions);
+}
+
+var height = $('#image').height();
+var width = $('#image').width();
+
+var centerX = width/2;
+var centerY = height/2;
+var radius = height/3;
+
+var svgContainer = d3.select("svg");
+var circle = svgContainer.selectAll("circle").data([1, 2, 3, 4]);
+
+var arrayOfCircles = new Array();
+
+function createCircle(x, y, r, i) {
+    var newCircle = circle.enter().append("circle")
+    .attr("cx", x)
+    .attr("cy", y)
+    .attr("fill", "white")
+    .attr("stroke-width", 2)
+    .attr("r", r);
+
+    newCircle.attr("stroke", function() {
+        if (i == 2) {
+            return "green";
+        } else {
+            return "green";
+        }
+    });
+
+    arrayOfCircles.push(newCircle);
+}
+
+function drawLine(xOne, yOne, xTwo, yTwo, radius) {
+    svgContainer.append("line")
+    .attr("x1", xOne)
+    .attr("x2", xTwo)
+    .attr("y1", yOne)
+    .attr("y2", yTwo)
+    .attr("stroke-width", 2)
+    .attr("stroke", "black");
+}
+
+function drawText(x, y, text) {
+    svgContainer.append("text")
+    .attr("dx", x - 4)
+    .attr("dy", y + 4)
+    .text(text);
+}
+
+function linkArc(sourceX, sourceY, targetX, targetY, r) {
+    var theta = Math.atan((targetX - sourceX) / (targetY - sourceY));
+    var phi = Math.atan((targetY - sourceY) / (targetX - sourceX));
+
+    var sinTheta = r * Math.sin(theta);
+    var cosTheta = r * Math.cos(theta);
+    var sinPhi = r * Math.sin(phi);
+    var cosPhi = r * Math.cos(phi);
+
+    // Set the position of the link's end point at the source node
+    // such that it is on the edge closest to the target node
+    if (targetY > sourceY) {
+        sourceX = sourceX + sinTheta;
+        sourceY = sourceY + cosTheta;
+    }
+    else {
+        sourceX = sourceX - sinTheta;
+        sourceY = sourceY - cosTheta;
+    }
+
+    // Set the position of the link's end point at the target node
+    // such that it is on the edge closest to the source node
+    if (sourceX > targetX) {
+        targetX = targetX + cosPhi;
+        targetY = targetY + sinPhi;    
+    }
+    else {
+        targetX = targetX - cosPhi;
+        targetY = targetY - sinPhi;   
+    }
+
+    // Draw an arc between the two calculated points
+    var dx = targetX - sourceX,
+        dy = targetY - sourceY,
+        dr = Math.sqrt(dx * dx + dy * dy);
+    
+    drawLine(sourceX, sourceY, targetX, targetY);
+    drawArrowhead(sourceX, sourceY, targetX, targetY, r / 2);
+}
+
+function drawArrowhead(x1, y1, x2, y2, r) {
+    var x, y;
+    var angle = Math.abs(Math.atan(y1-y2, x2-x1) * (180 / Math.PI));
+
+    if (Math.abs(y1-y2) > Math.abs(x2-x1)) {
+        if (x2 > x1) {
+            x = x2 + r * Math.abs(Math.cos((135 - angle) * (Math.PI / 180)));
+        } else {
+            x = x2 - r * Math.abs(Math.cos((135 - angle) * (Math.PI / 180)));
+        }
+
+        if (y2 > y1) {
+            y = y2 - r * Math.abs(Math.sin((135 - angle)  * (Math.PI / 180)));
+        } else {
+            y = y2 + r * Math.abs(Math.sin((135 - angle)  * (Math.PI / 180)));
+        }
+    } else {
+        if (x2 > x1) {
+            x = x2 + r * Math.abs(Math.cos((180 - angle) * (Math.PI / 180)));
+        } else {
+            x = x2 - r * Math.abs(Math.cos((180 - angle) * (Math.PI / 180)));
+        }
+
+        if (y2 > y1) {
+            y = y2 - r * Math.abs(Math.sin((180 - angle) * (Math.PI / 180)));
+        } else {
+            y = y2 + r * Math.abs(Math.sin((180 - angle) * (Math.PI / 180)));
+        }
+    }
+    if (parseInt(y2, 10) != parseInt(y1, 10)) {
+        drawLine(x, y, x2, y2);
+    }
+
+    if (Math.abs(y1-y2) > Math.abs(x2-x1)) {
+        if (x2 > x1) {
+            x = x2 - r * Math.abs(Math.cos((90 + angle) * (Math.PI / 180)));
+        } else {
+            x = x2 + r * Math.abs(Math.cos((90 + angle) * (Math.PI / 180)));
+        }
+
+        if (y2 > y1) {
+            y = y2 - r * Math.abs(Math.sin((90 + angle)  * (Math.PI / 180)));
+        } else {
+            y = y2 + r * Math.abs(Math.sin((90 + angle)  * (Math.PI / 180)));
+        }
+    } else {
+        if (x2 > x1) {
+            x = x2 - r * Math.abs(Math.cos((angle + 45) * (Math.PI / 180)));
+        } else {
+            x = x2 + r * Math.abs(Math.cos((angle + 45) * (Math.PI / 180)));
+        }
+
+        if (y2 > y1) {
+            y = y2 + r * Math.abs(Math.sin((angle + 45)  * (Math.PI / 180)));
+        } else {
+            y = y2 - r * Math.abs(Math.sin((angle + 45)  * (Math.PI / 180)));
+        }
+    }
+
+    drawLine(x, y, x2, y2);
+}
+
+/*Create a DFA of 3 circles. Draw lines connecting them.
+First should be named first, second, second, etc.*/
+
+function createDFA(nodes, connections) {
+    svgContainer.selectAll("*").remove();
+    var numCircles = nodes.length;
+    if (numCircles == 1) {
+        createCircle(centerX, centerY, height / (numCircles * 3), 0);
+        drawText(centerX - nodes[0].length * 3.5, centerY, nodes[0]);
+        return;
+    }
+    var angle = 0;
+    var centers = new Array();
+    for (i = 1; i <= numCircles; i++) {
+        centers.push([centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), nodes[i - 1]]);
+        angle += (Math.PI * 2) / numCircles;
+    }
+
+    angle = 0;
+
+    for (i = 1; i <= numCircles; i++) {
+        createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), i);
+        angle += (Math.PI * 2) / numCircles;
+
+        drawText(centers[i - 1][0] - centers[i - 1][2].length * 3.5, centers[i - 1][1], centers[i - 1][2]);
+    }
+
+    for (i = 0; i < connections.length; i++) {
+        var circle1 = connections[i][0];
+        var circle2 = connections[i][1];
+        var x1, y1, x2, y2;
+
+        for (j = 0; j < centers.length; j++) {
+            if (centers[j][2] === circle1) {
+                x1 = centers[j][0];
+                y1 = centers[j][1];
+            } else if (centers[j][2] === circle2) {
+                x2 = centers[j][0];
+                y2 = centers[j][1];
+            }
+        }
+
+        linkArc(x1, y1, x2, y2, height / (numCircles * 2));
     }
 }
+
+//createDFA(["LUL", "monkaS", "BabyRage", "Jebaited", "OMEGALUL"], [["BabyRage", "monkaS"], ["Jebaited", "BabyRage"], ["LUL", "OMEGALUL"]]);
+//createDFA(["Give Up", "Runtime Error", "Clean Compile", "Project Done", "Write Code"], [["Write Code", "Clean Compile"], ["Clean Compile", "Runtime Error"], ["Runtime Error", "Give Up"], ["Give Up", "Write Code"]]);
+//createDFA(["LOL"], []);
