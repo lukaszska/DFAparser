@@ -9,18 +9,19 @@ Takes user input and turns it into a tuple which the DFA machine can use to inte
 
 
 def get_information(text):
+    if len(text) == 0 or text is None:
+        return None
+
     detect_type = re.compile(
         r'alphabet(?!\')|transition(?!\')|(accept(?!\')|reject(?!\'))|'
-        r'(start(?!\')|begin(?!\'))|node(?!\')|(run(?!\')|execute(?!\'))'
-    )
+        r'(start(?!\')|begin(?!\'))|node(?!\')|(run(?!\')|execute(?!\'))')
 
-    add_remove = re.compile(
-        r'(create|make|build|generate|produce)|'
-        r'(delete|destroy|erase|discard|cut out|kill)|'
-    )
+    add = re.compile(r'(create|make|build|generate|produce|add|)')
+
+    remove = re.compile(r'(delete|destroy|erase|discard|cut out|kill|remove|)')
 
     create_node = re.compile(
-        r'(\'[\w]+\')'
+        r'node ([\S]+)'
     )
 
     create_alphabet = re.compile(
@@ -31,9 +32,7 @@ def get_information(text):
     )
 
     create_transition = re.compile(
-        r'(\'[\w]+\')|'
-        r'(to\s*\'[\w]+\')|'
-        r'(if|when\s\'[\w]+\')|'
+        r'transition ([\S]+) to ([\S]+) if ([\S]+)'
     )
 
     create_accept = re.compile(
@@ -52,51 +51,51 @@ def get_information(text):
         r'([\w]+)'
     )
 
+    if detect_type.search(text) is None:
+        return None
+
     collection = None
     collection_list = []
-    if detect_type.search(text).group(0) == "node":
+
+    if detect_type.search(text).group() == "node":
         collection = re.findall(create_node, text)
-        collection_list = [''] * (len(collection[0]) + 1)
-        if add_remove.search(text).group(1) is not None:
-            collection_list[0] = '1'
-        else:
-            collection_list[0] = '2'
-    if detect_type.search(text).group(0) == "alphabet":
+        if len(add.search(text).group()) > 0:
+            collection_list.append('1')
+        elif len(remove.search(text).group()) > 0:
+            collection_list.append('2')
+    elif detect_type.search(text).group() == "alphabet":
         collection = re.findall(create_alphabet, text)
         collection_list = [''] * (len(collection[0]) + 1)
-        if add_remove.search(text).group(1) is not None:
+        if add.search(text).group() is not None:
             collection_list[0] = '3'
-        else:
+        elif remove.search(text).group() is not None:
             collection_list[0] = '4'
-    if detect_type.search(text).group(0) == "transition":
+    elif detect_type.search(text).group() == "transition":
         collection = re.findall(create_transition, text)
-        collection_list = [''] * (len(collection[0]) + 1)
-        if add_remove.search(text).group(1) is not None:
-            collection_list[0] = '5'
-        else:
-            collection_list[0] = '6'
-    if detect_type.search(text).group(0) == "accept":
+        if len(add.search(text).group()) > 0:
+            collection_list.append('5')
+        elif len(remove.search(text).group()) > 0:
+            collection_list.append('6')
+    elif detect_type.search(text).group() == "accept":
         collection = re.findall(create_accept, text)
         collection_list = [''] * (len(collection[0]) + 1)
         collection_list[0] = '7'
-    if detect_type.search(text).group(0) == "reject":
+    elif detect_type.search(text).group() == "reject":
         collection = re.findall(create_accept, text)
         collection_list = [''] * (len(collection[0]) + 1)
         collection_list[0] = '8'
-    if detect_type.search(text).group(0) == "start" or detect_type.search(text).group(0) == "begin":
+    elif detect_type.search(text).group() == "start" or detect_type.search(text).group(0) == "begin":
         collection = re.findall(create_start, text)
         collection_list = [''] * (len(collection[0]) + 1)
         collection_list[0] = '9'
-    if detect_type.search(text).group(0) == "run" or detect_type.search(text).group(0) == "execute":
+    elif detect_type.search(text).group() == "run" or detect_type.search(text).group(0) == "execute":
         collection = re.findall(run_machine, text)
         collection_list = ['0', collection[1]]
         return tuple(collection_list)
 
-    if collection is None:
+    if collection is None or len(collection_list) == 0:
         return None
-
-    for x in collection:
-        for i in range(len(x)):
-            if x[i] != '':
-                collection_list[i+1] = x[i]
+    for element in collection:
+        collection_list.append(element)
+    print(collection_list)
     return tuple(collection_list)
