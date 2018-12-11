@@ -25,10 +25,7 @@ def get_information(text):
     )
 
     create_alphabet = re.compile(
-        r'(add|remove)|'
-        r'(from|between)|'
-        r'(\'[\w]+\'\sto\s\'[\w]+\')|'
-        r'(\'[\w]+\')'
+        r'alphabet ([\S]+)'
     )
 
     create_transition = re.compile(
@@ -43,12 +40,15 @@ def get_information(text):
     )
 
     create_start = re.compile(
-        r'(\'[\w]+\')|'
-        r'(except|other than)'
+        r'start at node ([\S]+)'
     )
 
     run_machine = re.compile(
-        r'([\w]+)'
+        r'([\S]+)+'
+    )
+
+    run_execute = re.compile(
+        r'(run|execute)'
     )
 
     if detect_type.search(text) is None:
@@ -65,11 +65,10 @@ def get_information(text):
             collection_list.append('2')
     elif detect_type.search(text).group() == "alphabet":
         collection = re.findall(create_alphabet, text)
-        collection_list = [''] * (len(collection[0]) + 1)
-        if add.search(text).group() is not None:
-            collection_list[0] = '3'
-        elif remove.search(text).group() is not None:
-            collection_list[0] = '4'
+        if len(add.search(text).group()) > 0:
+            collection_list.append('3')
+        elif len(remove.search(text).group()) > 0:
+            collection_list.append('4')
     elif detect_type.search(text).group() == "transition":
         collection = re.findall(create_transition, text)
         if len(add.search(text).group()) > 0:
@@ -86,12 +85,12 @@ def get_information(text):
         collection_list[0] = '8'
     elif detect_type.search(text).group() == "start" or detect_type.search(text).group(0) == "begin":
         collection = re.findall(create_start, text)
-        collection_list = [''] * (len(collection[0]) + 1)
-        collection_list[0] = '9'
+        collection_list.append('9')
     elif detect_type.search(text).group() == "run" or detect_type.search(text).group(0) == "execute":
         collection = re.findall(run_machine, text)
-        collection_list = ['0', collection[1]]
-        return tuple(collection_list)
+        if len(run_execute.search(text).group()) > 0:
+            collection = collection[1:]
+            collection_list.append('0')
 
     if collection is None or len(collection_list) == 0:
         return None
