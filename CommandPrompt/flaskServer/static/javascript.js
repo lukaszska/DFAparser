@@ -40,6 +40,9 @@ function parseJson(json) {
     json = JSON.parse(json);
     console.log(typeof json);
     console.log(json.graph);
+    if (json.result !== null) {
+        window.alert('Result is: ' + json.result)
+    }
     createDFA(json.graph, json.transitions);
 }
 
