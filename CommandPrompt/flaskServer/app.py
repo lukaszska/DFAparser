@@ -26,6 +26,7 @@ def index():
         if user not in users:
             users[user] = DFA()
         users[user].tuple_reader(get_information(request.form['script']))
+        print(users[user].dfa_dict)
         return json.dumps(users[user].dfa_dict)
     return render_template("index.html")
 

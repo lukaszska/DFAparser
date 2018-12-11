@@ -44,7 +44,11 @@ def get_information(text):
     )
 
     run_machine = re.compile(
-        r'([\w]+)'
+        r'([\S]+)+'
+    )
+
+    run_execute = re.compile(
+        r'(run|execute)'
     )
 
     if detect_type.search(text) is None:
@@ -84,12 +88,12 @@ def get_information(text):
         collection_list.append('9')
     elif detect_type.search(text).group() == "run" or detect_type.search(text).group(0) == "execute":
         collection = re.findall(run_machine, text)
-        collection_list = ['0', collection[1]]
-        return tuple(collection_list)
+        if len(run_execute.search(text).group()) > 0:
+            collection = collection[1:]
+            collection_list.append('0')
 
     if collection is None or len(collection_list) == 0:
         return None
     for element in collection:
         collection_list.append(element)
-    print(collection_list)
     return tuple(collection_list)

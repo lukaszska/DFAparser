@@ -1,4 +1,3 @@
-
 class DFA:
     # Create the data structure that will represent the DFA
     def __init__(self):
@@ -104,12 +103,24 @@ class DFA:
 
     # Runs through the graph and checks if the string is accepted
     def check_string(self, s):
-        current_node = self.dfa_dict['start']
-        for c in s:
-            current_node = self.dfa_dict['graph'][current_node][c]
-        return current_node in self.dfa_dict['accepted_states']
+        if self.dfa_dict['start'] is None \
+                or len(self.dfa_dict['graph']) == 0 \
+                or len(self.dfa_dict['path']) == 0 \
+                or len(self.dfa_dict['alphabet']) == 0 \
+                or len(s) == 0:
+            return None
+        current = self.dfa_dict['start']
+        path = self.dfa_dict['path']
+        alphabet = self.dfa_dict['alphabet']
+        for character in s:
+            if character in alphabet:
+                current = path[current][character]
+            else:
+                current = None
+                break
+        self.dfa_dict['result'] = current
 
-    # Checks tuple and decides what function to run
+    #   Checks tuple and decides what function to run
     def tuple_reader(self, tup):
         if tup is None or len(tup) == 1:
             return
@@ -138,5 +149,5 @@ class DFA:
         elif flag == '9':
             self.add_starting_node(list(tup).pop())
         elif flag == '0':
-            return self.check_string(tup[1])
+            return self.check_string(tup[1:])
 
