@@ -40,10 +40,10 @@ function parseJson(json) {
     json = JSON.parse(json);
     console.log(typeof json);
     console.log(json.graph);
-    if (json.result !== null) {
-        window.alert('Result is: ' + json.result)
-    }
-    createDFA(json.graph, json.transitions);
+    // if (json.result !== null) {
+    //     window.alert('Result is: ' + json.result)
+    // }
+    createDFA(json.graph, json.transitions, json.result);
 }
 
 var height = $('#image').height();
@@ -58,21 +58,14 @@ var circle = svgContainer.selectAll("circle").data([1, 2, 3, 4]);
 
 var arrayOfCircles = new Array();
 
-function createCircle(x, y, r, i) {
+function createCircle(x, y, r, c) {
     var newCircle = circle.enter().append("circle")
     .attr("cx", x)
     .attr("cy", y)
     .attr("fill", "white")
     .attr("stroke-width", 2)
-    .attr("r", r);
-
-    newCircle.attr("stroke", function() {
-        if (i == 2) {
-            return "green";
-        } else {
-            return "green";
-        }
-    });
+    .attr("r", r)
+    .attr("stroke", c);
 
     arrayOfCircles.push(newCircle);
 }
@@ -199,11 +192,11 @@ function drawArrowhead(x1, y1, x2, y2, r) {
 /*Create a DFA of 3 circles. Draw lines connecting them.
 First should be named first, second, second, etc.*/
 
-function createDFA(nodes, connections) {
+function createDFA(nodes, connections, answer) {
     svgContainer.selectAll("*").remove();
     var numCircles = nodes.length;
     if (numCircles == 1) {
-        createCircle(centerX, centerY, height / (numCircles * 3), 0);
+        createCircle(centerX, centerY, height / (numCircles * 3), "green");
         drawText(centerX - nodes[0].length * 3.5, centerY, nodes[0]);
         return;
     }
@@ -217,7 +210,11 @@ function createDFA(nodes, connections) {
     angle = 0;
 
     for (i = 1; i <= numCircles; i++) {
-        createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), i);
+        if (centers[i - 1][2] === answer) {
+            createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), "blue");
+        } else {
+            createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), "green");
+        }
         angle += (Math.PI * 2) / numCircles;
 
         drawText(centers[i - 1][0] - centers[i - 1][2].length * 3.5, centers[i - 1][1], centers[i - 1][2]);

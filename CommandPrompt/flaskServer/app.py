@@ -27,7 +27,9 @@ def index():
             users[user] = DFA()
         users[user].tuple_reader(get_information(request.form['script']))
         print(users[user].dfa_dict)
-        return json.dumps(users[user].dfa_dict)
+        output = json.dumps(users[user].dfa_dict)
+        users[user].dfa_dict['result'] = None
+        return output
     return render_template("index.html")
 
 
