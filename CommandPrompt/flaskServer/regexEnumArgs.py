@@ -97,5 +97,4 @@ def get_information(text):
         return None
     for element in collection:
         collection_list.append(element)
-    print(collection_list)
     return tuple(collection_list)

@@ -38,14 +38,18 @@ class DFA:
         self.dfa_dict['start'] = n_list[1]
 
     # Removes the nodes from the list and all transitions to the node
-    def remove_nodes(self, nodes):
+    def remove_nodes(self, nodez):
         if len(self.dfa_dict['graph']) == 0:
             return
-        for node in nodes:
+        for node in nodez:
             if node not in self.dfa_dict['graph']:
                 continue
             node_index = self.dfa_dict['graph'].index(node)
-            self.dfa_dict['graph'].pop(node_index)
+            deleted = self.dfa_dict['graph'].pop(node_index)
+            for transition in self.dfa_dict['transitions']:
+                if deleted in transition:
+                    self.dfa_dict['transitions'].pop(self.dfa_dict['transitions'].index(transition))
+
 
     # Updates the inner dict with new transtions (begin_node, destination_node, edge)
     def add_transitions(self, transitions):
@@ -60,8 +64,15 @@ class DFA:
 
     # Updates the inner dict with new transitions (begin_node, destination_node, edge)
     def remove_transitions(self, transitions):
-        for i in range(1, len(t_list), 3):
-            self.dfa_dict['graph'][t_list[i]].pop(t_list[i + 2])
+        transition = []
+        for i in range(0, len(transitions) - 1):
+            if transitions[i] not in self.dfa_dict['graph']:
+                continue
+            transition.append(transitions[i])
+        if len(transition) == 0 or transition not in self.dfa_dict['transitions']:
+            return
+        transition_index = self.dfa_dict['transitions'].index(transition)
+        self.dfa_dict['transitions'].pop(transition_index)
 
     # If node already exists, removed. If node does exist, add.
     def add_accepts(self, accepts):
@@ -114,8 +125,12 @@ class DFA:
             self.remove_alphabet(tup[1:])
         # set transitions
         elif flag == '5':
+            if len(tup) == 1:
+                return
             self.add_transitions(list(tup).pop(1))
         elif flag == '6':
+            if len(tup) == 1:
+                return
             self.remove_transitions(list(tup).pop(1))
         # create or remove accepted states
         elif flag == '7':
