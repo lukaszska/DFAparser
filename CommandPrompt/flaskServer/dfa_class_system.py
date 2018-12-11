@@ -43,12 +43,17 @@ class DFA:
             return
         for node in nodez:
             if node not in self.dfa_dict['graph']:
+                print(node)
                 continue
             node_index = self.dfa_dict['graph'].index(node)
             deleted = self.dfa_dict['graph'].pop(node_index)
-            for transition in self.dfa_dict['transitions']:
-                if deleted in transition:
-                    self.dfa_dict['transitions'].pop(self.dfa_dict['transitions'].index(transition))
+            transitions = self.dfa_dict['transitions']
+            i = 0
+            while i < len(transitions):
+                if deleted in transitions[i]:
+                    self.dfa_dict['transitions'].pop(self.dfa_dict['transitions'].index(transitions[i]))
+                    i -= 1
+                i += 1
 
 
     # Updates the inner dict with new transtions (begin_node, destination_node, edge)
