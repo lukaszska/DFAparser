@@ -43,7 +43,7 @@ function parseJson(json) {
     // if (json.result !== null) {
     //     window.alert('Result is: ' + json.result)
     // }
-    createDFA(json.graph, json.transitions, json.result);
+    createDFA(json.graph, json.transitions, json.result, json.start);
 }
 
 var height = $('#image').height();
@@ -192,11 +192,11 @@ function drawArrowhead(x1, y1, x2, y2, r) {
 /*Create a DFA of 3 circles. Draw lines connecting them.
 First should be named first, second, second, etc.*/
 
-function createDFA(nodes, connections, answer) {
+function createDFA(nodes, connections, answer, start) {
     svgContainer.selectAll("*").remove();
     var numCircles = nodes.length;
     if (numCircles == 1) {
-        createCircle(centerX, centerY, height / (numCircles * 3), "green");
+        createCircle(centerX, centerY, height / (numCircles * 3), "black");
         drawText(centerX - nodes[0].length * 3.5, centerY, nodes[0]);
         return;
     }
@@ -211,9 +211,11 @@ function createDFA(nodes, connections, answer) {
 
     for (i = 1; i <= numCircles; i++) {
         if (centers[i - 1][2] === answer) {
+            createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), "red");
+        } else if (centers[i - 1][2] === start) {
             createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), "blue");
         } else {
-            createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), "green");
+            createCircle(centerX - radius * Math.cos(angle), centerY - radius * Math.sin(angle), height / (numCircles * 2), "black");
         }
         angle += (Math.PI * 2) / numCircles;
 
@@ -235,10 +237,22 @@ function createDFA(nodes, connections, answer) {
             }
         }
 
-        linkArc(x1, y1, x2, y2, height / (numCircles * 2));
+        if (circle1 !== circle2) {
+            linkArc(x1, y1, x2, y2, height / (numCircles * 2));
+        }
     }
 }
 
 //createDFA(["LUL", "monkaS", "BabyRage", "Jebaited", "OMEGALUL"], [["BabyRage", "monkaS"], ["Jebaited", "BabyRage"], ["LUL", "OMEGALUL"]]);
 //createDFA(["Give Up", "Runtime Error", "Clean Compile", "Project Done", "Write Code"], [["Write Code", "Clean Compile"], ["Clean Compile", "Runtime Error"], ["Runtime Error", "Give Up"], ["Give Up", "Write Code"]]);
 //createDFA(["LOL"], []);
+
+setConsole("<b>WELCOME TO FINITE STATE MACHINE GENERATOR!!!</b>");
+setConsole("\n<b>Commands:</b>");
+setConsole("add node [node_name]");
+setConsole("add alphabet [letter]");
+setConsole("add transition [node1] to [node2] if [input_from_alphabet]");
+setConsole("start at node [starting_node]");
+setConsole("kill node [node_name]");
+setConsole("kill alphabet [letter]");
+setConsole("kill transition [transition]\n");

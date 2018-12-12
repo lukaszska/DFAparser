@@ -38,7 +38,7 @@ class DFA:
             i = 0
             while i < len(transitions):
                 if deleted_node in transitions[i]:
-                    transitions.pop(transitions.index(transitions[i]))
+                    transitions.pop(transitions.index(transitions[i])) # HERE
                     i -= 1
                 i += 1
 
